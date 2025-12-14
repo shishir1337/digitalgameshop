@@ -6,18 +6,13 @@ import { PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js'
 import { useRouter } from 'next/navigation'
 import React, { useCallback, FormEvent } from 'react'
 import { useCart, usePayments } from '@payloadcms/plugin-ecommerce/client/react'
-import { Address } from '@/payload-types'
-
 type Props = {
   customerEmail?: string
-  billingAddress?: Partial<Address>
-  shippingAddress?: Partial<Address>
   setProcessingPayment: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export const CheckoutForm: React.FC<Props> = ({
   customerEmail,
-  billingAddress,
   setProcessingPayment,
 }) => {
   const stripe = useStripe()
@@ -44,15 +39,6 @@ export const CheckoutForm: React.FC<Props> = ({
               payment_method_data: {
                 billing_details: {
                   email: customerEmail,
-                  phone: billingAddress?.phone,
-                  address: {
-                    line1: billingAddress?.addressLine1,
-                    line2: billingAddress?.addressLine2,
-                    city: billingAddress?.city,
-                    state: billingAddress?.state,
-                    postal_code: billingAddress?.postalCode,
-                    country: billingAddress?.country,
-                  },
                 },
               },
             },
@@ -107,13 +93,6 @@ export const CheckoutForm: React.FC<Props> = ({
       stripe,
       elements,
       customerEmail,
-      billingAddress?.phone,
-      billingAddress?.addressLine1,
-      billingAddress?.addressLine2,
-      billingAddress?.city,
-      billingAddress?.state,
-      billingAddress?.postalCode,
-      billingAddress?.country,
       confirmOrder,
       clearCart,
       router,
