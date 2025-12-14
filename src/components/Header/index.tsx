@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import {
   Search,
   Menu,
@@ -25,11 +26,23 @@ import {
   TrendingUp,
   Film,
   Radio,
+  User as UserIcon,
+  LogOut,
+  Settings,
   type LucideIcon,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ModeToggle } from "@/components/mode-toggle"
+import { useAuth } from "@/providers/Auth"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -122,6 +135,164 @@ function getCategoryUrl(category: string, subcategory: string): string {
   return `/category/${category.toLowerCase()}/${subcategory
     .toLowerCase()
     .replace(/\s+/g, "-")}`
+}
+
+// User Menu Component - Shows profile image when logged in, Sign In button when not
+function UserMenu() {
+  const { user } = useAuth()
+
+  const getProfileImageUrl = (): string | null => {
+    if (user?.profileImage && typeof user.profileImage === 'object' && user.profileImage.url) {
+      return `${process.env.NEXT_PUBLIC_SERVER_URL}${user.profileImage.url}`
+    }
+    return null
+  }
+
+  if (user) {
+    const profileImageUrl = getProfileImageUrl()
+    
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            className="relative h-9 w-9 rounded-full p-0 hover:bg-accent transition-all overflow-hidden"
+            aria-label="User menu"
+          >
+            {profileImageUrl ? (
+              <div className="relative h-full w-full">
+                <Image
+                  src={profileImageUrl}
+                  alt={user.name || user.email || "User"}
+                  fill
+                  className="rounded-full object-cover"
+                  sizes="36px"
+                />
+              </div>
+            ) : (
+              <div className="flex h-full w-full items-center justify-center rounded-full bg-muted">
+                <UserIcon className="h-5 w-5 text-muted-foreground" />
+              </div>
+            )}
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-56">
+          <DropdownMenuLabel>
+            <div className="flex flex-col space-y-1">
+              <p className="text-sm font-medium leading-none">
+                {user.name || "User"}
+              </p>
+              <p className="text-xs leading-none text-muted-foreground">
+                {user.email}
+              </p>
+            </div>
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem asChild>
+            <Link href="/account" className="flex items-center cursor-pointer">
+              <Settings className="mr-2 h-4 w-4" />
+              <span>Account Settings</span>
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href="/orders" className="flex items-center cursor-pointer">
+              <ShoppingCart className="mr-2 h-4 w-4" />
+              <span>Orders</span>
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem asChild>
+            <Link href="/logout" className="flex items-center cursor-pointer text-destructive focus:text-destructive">
+              <LogOut className="mr-2 h-4 w-4" />
+              <span>Log out</span>
+            </Link>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    )
+  }
+
+  return (
+    <Button
+      variant="outline"
+      className="h-9 px-3 sm:px-4 text-sm font-medium transition-all hover:bg-accent active:scale-95"
+      asChild
+    >
+      <Link href="/login">Sign In</Link>
+    </Button>
+  )
+}
+
+// Mobile User Menu Component
+function MobileUserMenu() {
+  const { user } = useAuth()
+
+  const getProfileImageUrl = (): string | null => {
+    if (user?.profileImage && typeof user.profileImage === 'object' && user.profileImage.url) {
+      return `${process.env.NEXT_PUBLIC_SERVER_URL}${user.profileImage.url}`
+    }
+    return null
+  }
+
+  if (user) {
+    const profileImageUrl = getProfileImageUrl()
+    
+    return (
+      <div className="flex flex-col gap-3">
+        <div className="flex items-center gap-3 px-2 py-2 rounded-lg bg-muted/50">
+          <div className="relative h-12 w-12 rounded-full overflow-hidden bg-background border-2 border-border shrink-0">
+            {profileImageUrl ? (
+              <Image
+                src={profileImageUrl}
+                alt={user.name || user.email || "User"}
+                fill
+                className="object-cover"
+                sizes="48px"
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center">
+                <UserIcon className="h-6 w-6 text-muted-foreground" />
+              </div>
+            )}
+          </div>
+          <div className="flex flex-col min-w-0 flex-1">
+            <p className="text-sm font-medium leading-none truncate">
+              {user.name || "User"}
+            </p>
+            <p className="text-xs leading-none text-muted-foreground truncate">
+              {user.email}
+            </p>
+          </div>
+        </div>
+        <div className="flex flex-col gap-2">
+          <Button variant="outline" className="w-full justify-start h-11 text-base font-medium" asChild>
+            <Link href="/account">
+              <Settings className="mr-2 h-4 w-4" />
+              Account Settings
+            </Link>
+          </Button>
+          <Button variant="outline" className="w-full justify-start h-11 text-base font-medium" asChild>
+            <Link href="/orders">
+              <ShoppingCart className="mr-2 h-4 w-4" />
+              Orders
+            </Link>
+          </Button>
+          <Button variant="outline" className="w-full justify-start h-11 text-base font-medium text-destructive hover:text-destructive" asChild>
+            <Link href="/logout">
+              <LogOut className="mr-2 h-4 w-4" />
+              Log out
+            </Link>
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <Button variant="outline" className="w-full h-11 text-base font-medium" asChild>
+      <Link href="/login">Sign In</Link>
+    </Button>
+  )
 }
 
 // Mobile Menu Component
@@ -223,11 +394,9 @@ function MobileMenu() {
             ))}
           </nav>
 
-          {/* Mobile Sign In Button */}
+          {/* Mobile User Menu or Sign In Button */}
           <div className="mt-auto border-t border-border/40 pt-6 pb-2">
-            <Button variant="outline" className="w-full h-11 text-base font-medium" asChild>
-              <Link href="/login">Sign In</Link>
-            </Button>
+            <MobileUserMenu />
           </div>
         </div>
       </SheetContent>
@@ -322,14 +491,8 @@ export function Header() {
           {/* Theme Toggle */}
           <ModeToggle />
 
-          {/* Sign In Button */}
-          <Button
-            variant="outline"
-            className="h-9 px-3 sm:px-4 text-sm font-medium transition-all hover:bg-accent active:scale-95"
-            asChild
-          >
-            <Link href="/login">Sign In</Link>
-          </Button>
+          {/* User Profile or Sign In Button */}
+          <UserMenu />
         </div>
       </div>
     </header>
