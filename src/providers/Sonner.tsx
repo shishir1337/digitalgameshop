@@ -1,6 +1,6 @@
 'use client'
 
-import { useTheme } from '@/providers/Theme'
+import { useTheme } from 'next-themes'
 import { Toaster } from 'sonner'
 
 export const SonnerProvider = ({ children }: { children?: React.ReactNode }) => {
@@ -10,7 +10,7 @@ export const SonnerProvider = ({ children }: { children?: React.ReactNode }) => 
     <>
       {children}
 
-      <Toaster richColors position="bottom-left" theme={theme || 'light'} />
+      <Toaster richColors position="bottom-left" theme={(theme as 'light' | 'dark') || 'light'} />
     </>
   )
 }

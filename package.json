@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@payloadcms/admin-bar": "3.68.3",
+    "@payloadcms/db-postgres": "3.68.3",
     "@payloadcms/email-nodemailer": "3.68.3",
     "@payloadcms/live-preview-react": "3.68.3",
     "@payloadcms/next": "3.68.3",
@@ -34,8 +35,11 @@
     "@payloadcms/ui": "3.68.3",
     "@radix-ui/react-accordion": "1.2.11",
     "@radix-ui/react-checkbox": "^1.1.4",
+    "@radix-ui/react-collapsible": "^1.1.12",
     "@radix-ui/react-dialog": "^1.1.14",
+    "@radix-ui/react-dropdown-menu": "^2.1.16",
     "@radix-ui/react-label": "^2.1.2",
+    "@radix-ui/react-navigation-menu": "^1.2.14",
     "@radix-ui/react-select": "^2.1.6",
     "@radix-ui/react-slot": "^1.1.2",
     "@stripe/react-stripe-js": "^3",
@@ -63,8 +67,7 @@
     "sonner": "^1.7.2",
     "stripe": "18.5.0",
     "tailwind-merge": "^2.3.0",
-    "tailwindcss-animate": "^1.0.7",
-    "@payloadcms/db-postgres": "3.68.3"
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
