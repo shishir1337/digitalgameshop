@@ -15,19 +15,32 @@ import {
 import { useAuth } from '@/providers/Auth'
 import { MenuIcon } from 'lucide-react'
 import Link from 'next/link'
-import { usePathname, useSearchParams } from 'next/navigation'
+import { usePathname, useSearchParams, useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 
 interface Props {
   menu: Header['navItems']
 }
 
 export function MobileMenu({ menu }: Props) {
-  const { user } = useAuth()
+  const { user, logout } = useAuth()
+  const router = useRouter()
 
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const [isOpen, setIsOpen] = useState(false)
+
+  const handleLogout = async () => {
+    try {
+      await logout()
+      toast.success('Logged out successfully')
+      setIsOpen(false)
+      router.push('/')
+    } catch (error) {
+      toast.error('Failed to log out')
+    }
+  }
 
   const closeMobileMenu = () => setIsOpen(false)
 
@@ -82,8 +95,8 @@ export function MobileMenu({ menu }: Props) {
                 <Link href="/account">Manage account</Link>
               </li>
               <li className="mt-6">
-                <Button asChild variant="outline">
-                  <Link href="/logout">Log out</Link>
+                <Button onClick={handleLogout} variant="outline">
+                  Log out
                 </Button>
               </li>
             </ul>

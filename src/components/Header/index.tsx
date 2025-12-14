@@ -43,6 +43,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useRouter } from "next/navigation"
+import { toast } from "sonner"
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -139,7 +141,18 @@ function getCategoryUrl(category: string, subcategory: string): string {
 
 // User Menu Component - Shows profile image when logged in, Sign In button when not
 function UserMenu() {
-  const { user } = useAuth()
+  const { user, logout } = useAuth()
+  const router = useRouter()
+
+  const handleLogout = async () => {
+    try {
+      await logout()
+      toast.success('Logged out successfully')
+      router.push('/')
+    } catch (error) {
+      toast.error('Failed to log out')
+    }
+  }
 
   const getProfileImageUrl = (): string | null => {
     if (user?.profileImage && typeof user.profileImage === 'object' && user.profileImage.url) {
@@ -201,11 +214,12 @@ function UserMenu() {
             </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem asChild>
-            <Link href="/logout" className="flex items-center cursor-pointer text-destructive focus:text-destructive">
-              <LogOut className="mr-2 h-4 w-4" />
-              <span>Log out</span>
-            </Link>
+          <DropdownMenuItem 
+            onClick={handleLogout}
+            className="flex items-center cursor-pointer text-destructive focus:text-destructive"
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            <span>Log out</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -225,7 +239,18 @@ function UserMenu() {
 
 // Mobile User Menu Component
 function MobileUserMenu() {
-  const { user } = useAuth()
+  const { user, logout } = useAuth()
+  const router = useRouter()
+
+  const handleLogout = async () => {
+    try {
+      await logout()
+      toast.success('Logged out successfully')
+      router.push('/')
+    } catch (error) {
+      toast.error('Failed to log out')
+    }
+  }
 
   const getProfileImageUrl = (): string | null => {
     if (user?.profileImage && typeof user.profileImage === 'object' && user.profileImage.url) {
@@ -277,11 +302,13 @@ function MobileUserMenu() {
               Orders
             </Link>
           </Button>
-          <Button variant="outline" className="w-full justify-start h-11 text-base font-medium text-destructive hover:text-destructive" asChild>
-            <Link href="/logout">
-              <LogOut className="mr-2 h-4 w-4" />
-              Log out
-            </Link>
+          <Button 
+            variant="outline" 
+            className="w-full justify-start h-11 text-base font-medium text-destructive hover:text-destructive" 
+            onClick={handleLogout}
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            Log out
           </Button>
         </div>
       </div>

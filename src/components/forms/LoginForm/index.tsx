@@ -11,6 +11,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useCallback, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
+import { toast } from 'sonner'
 
 type FormData = {
   email: string
@@ -19,6 +20,7 @@ type FormData = {
 
 export const LoginForm: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const searchParams = useSearchParams()
   const allParams = searchParams.toString() ? `?${searchParams.toString()}` : ''
   const redirect = useRef(searchParams.get('redirect'))
@@ -27,19 +29,26 @@ export const LoginForm: React.FC = () => {
   const [error, setError] = React.useState<null | string>(null)
 
   const {
-    formState: { errors, isLoading },
+    formState: { errors },
     handleSubmit,
     register,
   } = useForm<FormData>()
 
   const onSubmit = useCallback(
     async (data: FormData) => {
+      setIsSubmitting(true)
+      setError(null)
       try {
         await login(data)
-        if (redirect?.current) router.push(redirect.current)
-        else router.push('/account')
+        toast.success('Logged in successfully!')
+        if (redirect?.current) {
+          router.push(redirect.current)
+        } else {
+          router.push('/')
+        }
       } catch (_) {
         setError('There was an error with the credentials provided. Please try again.')
+        setIsSubmitting(false)
       }
     },
     [login, router],
@@ -103,8 +112,8 @@ export const LoginForm: React.FC = () => {
         {errors.password && <FormError message={errors.password.message} />}
       </div>
 
-      <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
-        {isLoading ? 'Signing In...' : 'Sign In'}
+      <Button type="submit" className="w-full" size="lg" disabled={isSubmitting}>
+        {isSubmitting ? 'Signing In...' : 'Sign In'}
       </Button>
 
       <div className="relative my-6">

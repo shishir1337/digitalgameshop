@@ -10,7 +10,7 @@ export const SonnerProvider = ({ children }: { children?: React.ReactNode }) => 
     <>
       {children}
 
-      <Toaster richColors position="bottom-left" theme={(theme as 'light' | 'dark') || 'light'} />
+      <Toaster richColors position="bottom-right" theme={(theme as 'light' | 'dark') || 'light'} />
     </>
   )
 }

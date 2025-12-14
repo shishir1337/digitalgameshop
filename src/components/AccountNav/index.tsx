@@ -3,7 +3,9 @@
 import { Button } from '@/components/ui/button'
 import clsx from 'clsx'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
+import { useAuth } from '@/providers/Auth'
+import { toast } from 'sonner'
 
 type Props = {
   className?: string
@@ -11,6 +13,18 @@ type Props = {
 
 export const AccountNav: React.FC<Props> = ({ className }) => {
   const pathname = usePathname()
+  const { logout } = useAuth()
+  const router = useRouter()
+
+  const handleLogout = async () => {
+    try {
+      await logout()
+      toast.success('Logged out successfully')
+      router.push('/')
+    } catch (error) {
+      toast.error('Failed to log out')
+    }
+  }
 
   return (
     <div className={clsx(className)}>
@@ -44,13 +58,11 @@ export const AccountNav: React.FC<Props> = ({ className }) => {
       <hr className="w-full border-white/5" />
 
       <Button
-        asChild
+        onClick={handleLogout}
         variant="link"
-        className={clsx('text-primary/50 hover:text-primary/100 hover:no-underline', {
-          'text-primary/100': pathname === '/logout',
-        })}
+        className="text-primary/50 hover:text-primary/100 hover:no-underline"
       >
-        <Link href="/logout">Log out</Link>
+        Log out
       </Button>
     </div>
   )
